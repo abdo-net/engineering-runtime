@@ -107,8 +107,27 @@ function main() {
       }, null, 2));
       break;
     }
+    case 'reason': {
+      const r = orch.reason(opts);
+      console.log(JSON.stringify({
+        project: r.projectDir,
+        nodes: r.store.allNodes().length,
+        edges: r.store.allEdges().length,
+        truth: r.store.allTruth().length,
+        derived_facts: r.facts.length,
+        facts: r.facts.map(f => ({
+          type: f.inference_type,
+          subject: f.subject,
+          statement: f.statement,
+          confidence: f.confidence
+        })),
+        model_coverage: r.modelCoverage.coverage,
+        gate: r.gate
+      }, null, 2));
+      break;
+    }
     default:
-      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node] | conformance [node] | persist [node]');
+      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node] | conformance [node] | persist [node] | reason [node]');
   }
 }
 function fail(m) { console.error(m); process.exit(1); }

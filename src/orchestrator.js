@@ -13,6 +13,7 @@ const { impact } = require('./graph');
 const { modelCoverage } = require('./coverage');
 const { gateReconstructionComplete } = require('./gates');
 const { buildPackage } = require('./packaging');
+const { buildReasoning } = require('./reasoning');
 
 const ROOT = path.resolve(__dirname, '..');
 const DEFAULT_PROJECT = path.join(ROOT, 'fixtures', 'sample-project');
@@ -21,6 +22,8 @@ const DEFAULT_LOCK = path.join(ROOT, 'kernel.lock');
 
 // BOOT -> WARM reconstruct (cold inference of ontology is out of this milestone).
 function reconstruct(opts = {}) {
+  const { buildReasoning } = require('./reasoning');
+
   const projectDir = opts.projectDir || DEFAULT_PROJECT;
   const kernel = loadKernel(opts.lock || DEFAULT_LOCK);
   const ontology = loadOntology(opts.ontology || DEFAULT_ONTOLOGY);
@@ -31,12 +34,18 @@ function reconstruct(opts = {}) {
   buildStructural(store, observations);
   buildTraceability(store, observations, ontology);
 
+  // S5 reasoning engines (opt-in, controlled by opts.reasoning)
+  let facts = [];
+  if (opts.reasoning === true) {
+    facts = buildReasoning(store, projectDir);
+  }
+
   const target = ontology.coverage_targets.default;
   const modelCov = modelCoverage(store, ontology);
   const gate = gateReconstructionComplete(modelCov, target);
 
   store.freeze(); // model is frozen before any planning/packaging
-  return { projectDir, kernel, ontology, store, unsupported, modelCoverage: modelCov, gate };
+  return { projectDir, kernel, ontology, store, unsupported, modelCoverage: modelCov, gate, facts };
 }
 
 function impactReport(target, opts = {}) {
@@ -51,4 +60,25 @@ function executionPackage(target, opts = {}) {
   return { ...r, impact: imp, package: pkg };
 }
 
-module.exports = { reconstruct, impactReport, executionPackage, DEFAULT_PROJECT };
+function reason(opts = {}) {
+  const { buildReasoning } = require('./reasoning');
+  const projectDir = opts.projectDir || DEFAULT_PROJECT;
+  const kernel = loadKernel(opts.lock || DEFAULT_LOCK);
+  const ontology = loadOntology(opts.ontology || DEFAULT_ONTOLOGY);
+  const store = new Store();
+
+  const { observations, unsupported } = runAdapters(projectDir);
+  buildStructural(store, observations);
+  buildTraceability(store, observations, ontology);
+
+  const facts = buildReasoning(store, projectDir);
+
+  const target = ontology.coverage_targets.default;
+  const modelCov = modelCoverage(store, ontology);
+  const gate = gateReconstructionComplete(modelCov, target);
+
+  store.freeze();
+  return { projectDir, kernel, ontology, store, unsupported, modelCoverage: modelCov, gate, facts };
+}
+
+module.exports = { reconstruct, impactReport, executionPackage, reason, DEFAULT_PROJECT };

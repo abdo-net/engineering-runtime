@@ -46,7 +46,7 @@ function gitTag(runtimePath, tag) {
   }
 }
 
-function save(projectDir, store, impact, pkg, truth) {
+function save(projectDir, store, impact, pkg, truth, facts) {
   const runtimePath = runtimeDir(projectDir);
   ensureDir(runtimePath);
   ensureDir(path.join(runtimePath, 'sessions'));
@@ -64,6 +64,7 @@ function save(projectDir, store, impact, pkg, truth) {
     impact: canonical(impact),
     package: canonical(pkg),
     truth: canonical(truth ? [...truth.values()] : store.allTruth()),
+    reasoning: canonical(facts || []),
     snapshot: snapshot || 'no-package',
     version: '0.1.0',
     protocol_version: '1.0'
@@ -116,12 +117,14 @@ function load(projectDir) {
   const pkg = pkgStr && pkgStr !== 'no-package' ? JSON.parse(pkgStr) : null;
   const truth = truthStr ? JSON.parse(truthStr) : null;
   const snapshot = snapshotStr && snapshotStr !== 'no-package' ? snapshotStr : null;
+  const reasoningStr = readFile('reasoning');
+  const reasoning = reasoningStr ? JSON.parse(reasoningStr) : null;
 
-  return { store, impact, package: pkg, truth, snapshot, exists: true, runtimePath };
+  return { store, impact, package: pkg, truth, reasoning, snapshot, exists: true, runtimePath };
 }
 
-function roundTrip(projectDir, store, impact, pkg, truth) {
-  const saveResult = save(projectDir, store, impact, pkg, truth);
+function roundTrip(projectDir, store, impact, pkg, truth, facts) {
+  const saveResult = save(projectDir, store, impact, pkg, truth, facts);
   const loadResult = load(projectDir);
   if (!loadResult.exists) throw new Error('E_PERSISTENCE_FAILED: load returned empty after save');
 
