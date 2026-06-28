@@ -33,6 +33,7 @@ The objective of the Engineering Runtime is **not** to implement subsystems in i
 | 1 | Deterministic reconstruction | #1, #3, #4 — Topology, Knowledge Graph, Truth, Impact, Execution Package | ✅ COMPLETE | `c4cb82c` |
 | 1.5 | Runtime Validation | #8 — vendor-agnostic convergence proof | ✅ COMPLETE | `ccf90d3` |
 | 1.6 | AI Conformance Framework | #5, #8 — wire protocol + structured validation | ✅ COMPLETE | `bdec482` |
+| 2 | S2 Git-File Persistence | #6, #7 — persist state; enable AI resumption | ✅ COMPLETE | `b877c35` |
 
 ---
 
@@ -50,7 +51,6 @@ More critically, the existing roadmap **omitted S5 Reasoning Engines entirely**.
 
 | # | Name | Objective Contribution | Primary Spec | Ships When |
 |---|---|---|---|---|
-| 2 | S2 Git-File Persistence | #6, #7 — persist state; enable AI resumption | S2 | `detharness.js` green |
 | 3 | S5 Reasoning Engines | #2 — understand semantics, behavior, intent | S5 | `detharness.js` green |
 | 4 | S7 Truth Promotion + Invalidation | #3 — deepen Engineering Truth quality | S7 | `detharness.js` green |
 | 5 | S9 Planning Engine | #4 — plan changes from frozen package | S9 | `detharness.js` green |
@@ -100,11 +100,11 @@ Placed persistence after live vendor integration and bundled it with planning an
    - This is the machine-readable equivalent of `HANDOFF.md` for the Runtime itself.
 
 ### Success Criteria
-- [ ] `node src/cli.js persist fixtures/sample-project` produces a `<project>-runtime/` git repo with `model.json`, `impact.json`, `package.json`, `truth.json`.
-- [ ] Persistence round-trip: write → read → `canonical()` matches original.
-- [ ] Git tags are created for each persisted package.
-- [ ] `detharness.js` still passes (determinism of the Runtime itself is invariant).
-- [ ] A second AI can clone `<project>-runtime/` and reconstruct the exact same model by reading `model.json`.
+- [x] `node src/cli.js persist fixtures/sample-project` produces a `<project>-runtime/` git repo with `model.json`, `impact.json`, `package.json`, `truth.json`.
+- [x] Persistence round-trip: write → read → `canonical()` matches original.
+- [x] Git tags are created for each persisted package.
+- [x] `detharness.js` still passes (determinism of the Runtime itself is invariant).
+- [x] A second AI can clone `<project>-runtime/` and reconstruct the exact same model by reading `model.json`.
 
 ### Dependencies
 - Git must be available in the environment.
