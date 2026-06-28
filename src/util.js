@@ -4,6 +4,7 @@
 const crypto = require('crypto');
 
 function canonical(value) {
+  if (value === undefined) return 'null';
   if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
   if (value && typeof value === 'object') {
     const keys = Object.keys(value).sort();

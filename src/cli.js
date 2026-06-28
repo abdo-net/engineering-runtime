@@ -6,6 +6,9 @@ const { canonical } = require('./util');
 const orch = require('./orchestrator');
 const { runValidationSuite } = require('./validation');
 const { runConformanceSuite } = require('./ai-conformance');
+const { save, load, roundTrip } = require('./persistence');
+const { startSession, endSession } = require('./session');
+const { generateHandoff } = require('./handoff-protocol');
 
 function arg(flag, dflt) {
   const i = process.argv.indexOf(flag);
@@ -65,8 +68,47 @@ function main() {
       console.log(JSON.stringify(r, null, 2));
       break;
     }
+    case 'persist': {
+      const target = pos[0] || 'column:users.status';
+      const mission = opts.mission || `modify ${target}`;
+      const projectDir = opts.projectDir || orch.DEFAULT_PROJECT;
+
+      // Run full pipeline
+      const r = orch.executionPackage(target, opts);
+
+      // Start session
+      const session = startSession(projectDir, mission, target);
+
+      // Persist to git repo
+      const persistResult = save(projectDir, r.store, r.impact, r.package, r.store.allTruth());
+
+      // End session with summary
+      const summary = {
+        nodes: r.store.allNodes().length,
+        edges: r.store.allEdges().length,
+        truth: r.store.allTruth().length,
+        coverage: r.modelCoverage.coverage,
+        snapshot: r.package ? r.package.repository_snapshot : null
+      };
+      endSession(session.session_id, projectDir, r.gate.pass ? 'completed' : 'blocked', summary);
+
+      // Generate handoff
+      const handoff = generateHandoff(projectDir, session, r.store.serialize(), r.impact, r.package, r.gate);
+
+      // Print results
+      console.log(JSON.stringify({
+        session: session.session_id,
+        persisted: persistResult.committed,
+        runtime_path: persistResult.runtimePath,
+        snapshot: persistResult.snapshot,
+        handoff: handoff.handoff_id,
+        next_steps: handoff.next_steps,
+        gate: r.gate
+      }, null, 2));
+      break;
+    }
     default:
-      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node] | conformance [node]');
+      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node] | conformance [node] | persist [node]');
   }
 }
 function fail(m) { console.error(m); process.exit(1); }
