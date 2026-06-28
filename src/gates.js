@@ -17,4 +17,28 @@ function gateReconstructionComplete(modelCov, target) {
   return { ...g, gate: 'G-RECONSTRUCTION-COMPLETE' };
 }
 
-module.exports = { gateCoverage, gateReconstructionComplete };
+function gateTruthValid(truths) {
+  // G-TRUTH-VALID: Published truths must have ≥ 2 evidence sources
+  const published = truths.filter(t => t.lifecycle === 'Published');
+  const invalid = published.filter(t => !t.evidence || t.evidence.length < 2);
+  const pass = invalid.length === 0;
+  return {
+    gate: 'G-TRUTH-VALID', pass, blocking: !pass,
+    detail: pass ? 'all published truths have ≥ 2 evidence sources' : `${invalid.length} published truths have < 2 evidence sources`,
+    remediation: pass ? null : { action: 'INVESTIGATE', truth_ids: invalid.map(t => t.id) }
+  };
+}
+
+function gateTruthConsistent(truths) {
+  // G-TRUTH-CONSISTENT: no two published truths may contradict
+  const { findContradictions } = require('./truth');
+  const contradictions = findContradictions(truths);
+  const pass = contradictions.length === 0;
+  return {
+    gate: 'G-TRUTH-CONSISTENT', pass, blocking: !pass,
+    detail: pass ? 'no contradictions among published truths' : `${contradictions.length} contradictions found`,
+    remediation: pass ? null : { action: 'RECONCILE', contradictions }
+  };
+}
+
+module.exports = { gateCoverage, gateReconstructionComplete, gateTruthValid, gateTruthConsistent };
