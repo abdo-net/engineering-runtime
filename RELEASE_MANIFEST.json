@@ -1,0 +1,401 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "manifest_version": "1.0.0",
+  "release": {
+    "version": "0.1.0",
+    "tag": "v0.1.0",
+    "commit": "c03d4bed289365603dd6f81c07f76f151e0e1aab",
+    "tree_hash": "72620319525089fcaad302e1fcf45bdf7b605687",
+    "date": "2026-06-28",
+    "status": "BASELINE_FROZEN"
+  },
+  "kernel": {
+    "repo": "abdo-net/radius1-kernel",
+    "commit": "96042489b39e9a589280483054349ac2d7da00bc",
+    "version": "1.x",
+    "charter_id": "engineering-runtime-consumer"
+  },
+  "runtime": {
+    "version": "0.1.0",
+    "node_engine": ">= 20",
+    "dependencies": 0,
+    "license": "UNLICENSED",
+    "private": true
+  },
+  "validation": {
+    "determinism": {
+      "status": "PASS",
+      "exit_code": 0,
+      "verdict": "DETERMINISM_PROVEN",
+      "snapshot_hash": "e88cc4fc631a9a6d12fc665804770b15fc13c5711d222b23211e7e5cbef9ee5d"
+    },
+    "runtime_validation": {
+      "status": "PASS",
+      "exit_code": 0,
+      "verdict": "RUNTIME_VALIDATION_PROVEN",
+      "properties_passed": 10,
+      "properties_total": 10
+    },
+    "ai_conformance": {
+      "status": "PASS",
+      "exit_code": 0,
+      "verdict": "AI_CONFORMANCE_FRAMEWORK_PROVEN",
+      "workers_passed": 7,
+      "workers_total": 7
+    }
+  },
+  "files": {
+    "configuration": [
+      {
+        "path": ".gitignore",
+        "sha": "944f686d61dde78796f3c7c6958a3770fbc96cd1",
+        "size_bytes": 45
+      },
+      {
+        "path": "kernel.lock",
+        "sha": "70564e7645df21b2cf47995e4fa489fcede840eb",
+        "size_bytes": 158
+      },
+      {
+        "path": "package.json",
+        "sha": "e00a3dda17411b14764b562b6d5cd505139584c0",
+        "size_bytes": 297
+      }
+    ],
+    "source_core": [
+      {
+        "path": "src/adapters.js",
+        "sha": "25e66d4219379e873a3ddec270776c4f2b13c4bf",
+        "size_bytes": 3877
+      },
+      {
+        "path": "src/ai-conformance.js",
+        "sha": "c128ee49af20c112df211463202599a3b73a4f2c",
+        "size_bytes": 1128
+      },
+      {
+        "path": "src/cli.js",
+        "sha": "41de6230bb9f256ba9286f0e23b8471bd9275a66",
+        "size_bytes": 1874
+      },
+      {
+        "path": "src/conformance.js",
+        "sha": "1e176d1f7d09a42a2bd7b505b435e659ece11377",
+        "size_bytes": 5339
+      },
+      {
+        "path": "src/coverage.js",
+        "sha": "0cf185b88d32771aaa4c51d7c0c98a62108e837c",
+        "size_bytes": 1083
+      },
+      {
+        "path": "src/engines.js",
+        "sha": "6ccac8cb7a01ac06892a1725a54a8177a78f07be",
+        "size_bytes": 1224
+      },
+      {
+        "path": "src/gates.js",
+        "sha": "059e0bb295d68c262bb6a6a031afb6f3a81918b4",
+        "size_bytes": 676
+      },
+      {
+        "path": "src/graph.js",
+        "sha": "f4549f754f2b0fd263a29b38832caa135f83df6c",
+        "size_bytes": 834
+      },
+      {
+        "path": "src/kernel.js",
+        "sha": "4cea3e4eaf117ef6f0381451fec1f04f1656f131",
+        "size_bytes": 707
+      },
+      {
+        "path": "src/ontology.js",
+        "sha": "544855863bce6dd5bcd37e37b68ea3490cd3b5ba",
+        "size_bytes": 399
+      },
+      {
+        "path": "src/orchestrator.js",
+        "sha": "58a4f1fd2269ba8cf726a3d92accf3cc048fb8bd",
+        "size_bytes": 1484
+      },
+      {
+        "path": "src/packaging.js",
+        "sha": "7726bdf0de160583759c7c1723285629b78f2a89",
+        "size_bytes": 1056
+      },
+      {
+        "path": "src/protocol.js",
+        "sha": "32af1417e892673e2d83c64cecc7a9da2d3c5c96",
+        "size_bytes": 1707
+      },
+      {
+        "path": "src/store.js",
+        "sha": "6939fce6d77c1e1064ca722ad1b9926142efdf75",
+        "size_bytes": 820
+      },
+      {
+        "path": "src/util.js",
+        "sha": "13410a4da331e222c4f5fef4eaadde1cc23c7c64",
+        "size_bytes": 585
+      }
+    ],
+    "source_validation": [
+      {
+        "path": "src/validator.js",
+        "sha": "aee64329285ac0cff27bc9b836b861da14c02492",
+        "size_bytes": 3420
+      },
+      {
+        "path": "src/validation.js",
+        "sha": "ca50f462d12c69d2268123bd018b457c14fc4370",
+        "size_bytes": 2958
+      }
+    ],
+    "source_workers": [
+      {
+        "path": "src/workers/faithful-independent.js",
+        "sha": "6e47af39fab427e5d5f19f8e9435e8a2975b02a2",
+        "size_bytes": 936
+      },
+      {
+        "path": "src/workers/faithful-reorder.js",
+        "sha": "ce3bace8f5c2017670ad109d81badb0b76a6ea49",
+        "size_bytes": 723
+      },
+      {
+        "path": "src/workers/guessing.js",
+        "sha": "ad3516353cbb2dfe1954ca49415707a0a7968165",
+        "size_bytes": 1195
+      },
+      {
+        "path": "src/workers/lazy.js",
+        "sha": "4ee17b71c3d27d247bf4e1ca2adb8b3d3daa00cb",
+        "size_bytes": 928
+      },
+      {
+        "path": "src/workers/resume-only.js",
+        "sha": "aa29afdd58866c4a4f891249444080d18b1db4c1",
+        "size_bytes": 778
+      }
+    ],
+    "source_ai_workers": [
+      {
+        "path": "src/ai-workers/compliant.js",
+        "sha": "7f5f4faba6ec937b6da7146fc94c2d829d94b90f",
+        "size_bytes": 1694
+      },
+      {
+        "path": "src/ai-workers/evidence-forger.js",
+        "sha": "99557f3142e9e836e957d19a7e07c0121d2f7437",
+        "size_bytes": 620
+      },
+      {
+        "path": "src/ai-workers/hallucinator.js",
+        "sha": "7210d7d2caa2fd97a74cd931470c88747b8ab544",
+        "size_bytes": 638
+      },
+      {
+        "path": "src/ai-workers/impact-underclaimer.js",
+        "sha": "fb225c4848879a889507cbf3306e3564cab617b8",
+        "size_bytes": 470
+      },
+      {
+        "path": "src/ai-workers/instruction-ignorer.js",
+        "sha": "9b3a3d6856c099773c7f901cb5dfdafc54c6dfbd",
+        "size_bytes": 439
+      },
+      {
+        "path": "src/ai-workers/lazy-coverage-liar.js",
+        "sha": "5bfbcaeea7e634756f80170a4563e036cf17e090",
+        "size_bytes": 872
+      },
+      {
+        "path": "src/ai-workers/scope-violator.js",
+        "sha": "32d939396f76f46463c6eb2b18ee2c7fb2d7fd78",
+        "size_bytes": 506
+      }
+    ],
+    "source_harnesses": [
+      {
+        "path": "src/conformance-harness.js",
+        "sha": "11656f140c769f17f7b37e7f0e1e00bf5ba9bb84",
+        "size_bytes": 1257
+      },
+      {
+        "path": "src/detharness.js",
+        "sha": "5fdbb2a05ebbdc91fc10f8a9dc73e1c4d3aa2d60",
+        "size_bytes": 1122
+      },
+      {
+        "path": "src/validation-harness.js",
+        "sha": "67ca03ae15e796205bd667dd637f6d025a221faa",
+        "size_bytes": 1429
+      }
+    ],
+    "schemas": [
+      {
+        "path": "spec/schemas/ai-input-package.schema.json",
+        "sha": "554be87b4a3ee16702ffe6714ffb77e28dac5b24",
+        "size_bytes": 810
+      },
+      {
+        "path": "spec/schemas/ai-output-package.schema.json",
+        "sha": "b8d89cd6cfb1a3fbfad1b0cbbdfaac82312c7fd5",
+        "size_bytes": 1858
+      },
+      {
+        "path": "spec/schemas/edge.schema.json",
+        "sha": "3df280b208b7f54412f64eeabd741b4127a1741d",
+        "size_bytes": 423
+      },
+      {
+        "path": "spec/schemas/node.schema.json",
+        "sha": "391aff7cdcf758aab65f8028663d0d99b27c689f",
+        "size_bytes": 395
+      },
+      {
+        "path": "spec/schemas/truth.schema.json",
+        "sha": "57d57ee9685c25cba3fc306745eb29b1522e05ba",
+        "size_bytes": 672
+      }
+    ],
+    "profiles": [
+      {
+        "path": "profiles/crud-web.json",
+        "sha": "539fc7be9aa3301602fe8428f5f8401265138471",
+        "size_bytes": 781
+      }
+    ],
+    "fixtures": [
+      {
+        "path": "fixtures/sample-project/db.sql",
+        "sha": "ffb42ebd0bee1ae5696a27114f1f4a261c096422",
+        "size_bytes": 95
+      },
+      {
+        "path": "fixtures/sample-project/openapi.json",
+        "sha": "e4407ebb75ca4880674d0b3930d7091259041a2d",
+        "size_bytes": 168
+      },
+      {
+        "path": "fixtures/sample-project/user.entity.ts",
+        "sha": "47205de73bfbda9497a5d9b879f0d607be62c237",
+        "size_bytes": 180
+      },
+      {
+        "path": "fixtures/sample-project/users.controller.ts",
+        "sha": "b308683161077a08d97fbe390ea8ddbdb0bba26e",
+        "size_bytes": 141
+      },
+      {
+        "path": "fixtures/sample-project/users.repository.ts",
+        "sha": "63315e257a389406a8f06bb6a8d98820394dddbe",
+        "size_bytes": 85
+      },
+      {
+        "path": "fixtures/sample-project/users.service.ts",
+        "sha": "4a40b4dac6bd7c4fe894d2c1fc331c6ad3094445",
+        "size_bytes": 85
+      }
+    ],
+    "documentation": [
+      {
+        "path": "ARCHITECTURE_DECISIONS.md",
+        "sha": "e0eae973c195bd9e6388ba3fc00464a3d7423fca",
+        "size_bytes": 12991
+      },
+      {
+        "path": "BASELINE.md",
+        "sha": "e6e464b9caf339b09633791833b10462d45f3d9a",
+        "size_bytes": 4668
+      },
+      {
+        "path": "BOOTSTRAP_CHECKLIST.md",
+        "sha": "598750cd6d5cb1f3b3df205d1847ac8f7edef93a",
+        "size_bytes": 9179
+      },
+      {
+        "path": "BOOTSTRAP.md",
+        "sha": "585698e7a68653c7eda34180f27ea448e19d8f03",
+        "size_bytes": 5143
+      },
+      {
+        "path": "CHANGELOG.md",
+        "sha": "95ce268215504345accf832246b465e6df5ecbee",
+        "size_bytes": 10689
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "sha": "fb5ceccfeeeea3756ae7fc0c810f3755558330a5",
+        "size_bytes": 8663
+      },
+      {
+        "path": "CURRENT_STATE.md",
+        "sha": "6774b9ea5f9d3d8c27c360dd3b3d57ad9167bde8",
+        "size_bytes": 12565
+      },
+      {
+        "path": "DEVELOPMENT_PROTOCOL.md",
+        "sha": "dc186e752fe2fda66b99da76f553b4a53c29d2bf",
+        "size_bytes": 6860
+      },
+      {
+        "path": "HANDOFF.md",
+        "sha": "47f533db0c364a92a1fbbfb03dcb69b9df8bf3f8",
+        "size_bytes": 7115
+      },
+      {
+        "path": "MACHINE_CONTEXT.md",
+        "sha": "3d06f12b9f63ef006ad7dd2925a940d8a15b4973",
+        "size_bytes": 8738
+      },
+      {
+        "path": "README.md",
+        "sha": "8930f7c93509adacf264537d7d5f67094a811559",
+        "size_bytes": 13376
+      },
+      {
+        "path": "RELEASE_MANIFEST.json",
+        "sha": "e567c8d4aa833547b4a566b4a0622937805ffeac",
+        "size_bytes": 9059
+      },
+      {
+        "path": "RELEASE_NOTES_v0.1.0.md",
+        "sha": "bf7dc90c66b2b0f4ceadff97929aae10d1572669",
+        "size_bytes": 5030
+      },
+      {
+        "path": "REPOSITORY_CHARTER.md",
+        "sha": "50b9ab58f7b2215a93758f429e9e092b4243d7062",
+        "size_bytes": 7561
+      },
+      {
+        "path": "ROADMAP.md",
+        "sha": "bb36d8995ff0a4d7270d8bf046be7d56bb16527a",
+        "size_bytes": 11365
+      },
+      {
+        "path": "VERSION.md",
+        "sha": "a5c7809c90ae9cef2de108e8ef714a65fa5423ff",
+        "size_bytes": 7315
+      }
+    ]
+  },
+  "statistics": {
+    "total_files": 63,
+    "source_files": 32,
+    "schema_files": 5,
+    "profile_files": 1,
+    "fixture_files": 6,
+    "configuration_files": 3,
+    "documentation_files": 16,
+    "harness_files": 3,
+    "worker_files": 5,
+    "ai_worker_files": 7
+  },
+  "checksums": {
+    "all_files_sha256": "27ed7730714d72be74a566c076d7fc1923897ee623dc156eee9c6079ec8bb90e",
+    "source_files_sha256": "3a3d73170c3c6fea9382c66a85d86d5ccea2e1bf0e1e7dc8e63a4f6513982020",
+    "documentation_files_sha256": "8a0b5cc92aca690d323ffaf8bba51fcd6f4f87e4842ff251e50331be3e76d46e"
+  }
+}
