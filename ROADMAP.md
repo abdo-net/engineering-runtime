@@ -51,7 +51,7 @@ More critically, the existing roadmap **omitted S5 Reasoning Engines entirely**.
 
 | # | Name | Objective Contribution | Primary Spec | Ships When |
 |---|---|---|---|---|
-| 3 | S5 Reasoning Engines | #2 — understand semantics, behavior, intent | S5 | `detharness.js` green |
+| 3 | S5 Reasoning Engines | #2 — understand semantics, behavior, intent | ✅ COMPLETE | `fc2fe02` |
 | 4 | S7 Truth Promotion + Invalidation | #3 — deepen Engineering Truth quality | S7 | `detharness.js` green |
 | 5 | S9 Planning Engine | #4 — plan changes from frozen package | S9 | `detharness.js` green |
 | 6 | S13 Mediation (Core AI Loop) | #5 — AI driver loop with fixtures | S13 | `detharness.js` green |
@@ -152,10 +152,11 @@ Without reasoning engines, the Runtime can say "there is a function `updateUser`
    - `reason <projectDir>` — Run reasoning engines on a project and print derived facts.
 
 ### Success Criteria
-- [ ] `node src/cli.js reason fixtures/sample-project` produces at least 5 derived facts with evidence and confidence > 0.5.
-- [ ] Reasoning output is deterministic: same input → same derived facts on every run.
-- [ ] `detharness.js` still passes (the determinism harness may need to be updated to include reasoning output in the canonical form, but the core must remain deterministic).
-- [ ] Every derived fact has a `source_ref` and `evidence_quote` that the validator can verify.
+- [x] `node src/cli.js reason fixtures/sample-project` produces at least 5 derived facts with evidence and confidence > 0.5.
+- [x] Reasoning output is deterministic: same input → same derived facts on every run.
+- [x] `detharness.js` still passes (the determinism harness may need to be updated to include reasoning output in the canonical form, but the core must remain deterministic).
+- [x] Every derived fact has a `source_ref` and `evidence_quote` that the validator can verify.
+- [x] Reasoning does not break existing structural and traceability engines.
 - [ ] Reasoning does not break existing structural and traceability engines.
 
 ### Dependencies

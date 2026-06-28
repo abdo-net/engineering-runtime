@@ -3,7 +3,7 @@
 **Version:** 0.1.0  
 **Branch:** `master`  
 **Date:** 2026-06-28  
-**Head:** `b877c35`
+**Head:** `fc2fe02`
 
 ---
 
@@ -109,26 +109,35 @@
 
 ---
 
-## 2. Milestones Pending
-
 ### Milestone 3: S5 Reasoning Engines
 
-**Status:** 🔄 NOT STARTED
+**Commit:** `fc2fe02`  
+**Date:** 2026-06-28
 
-**What must be implemented:**
-- `src/reasoning.js` — Reasoning Engine (E02/E04/E05/E06/E07/E08/E09/E10): infer semantics, behavior, business rules, state machines, DTO transformations, permissions, error handling.
-- `src/engines.js` — Add `buildReasoning()` function.
-- `spec/schemas/reasoning.schema.json` — Schema for reasoning outputs.
-- `src/cli.js` — New command: `reason <projectDir>`.
+**What was implemented:**
 
-**Success criteria:**
-- `node src/cli.js reason fixtures/sample-project` produces at least 5 derived facts with evidence and confidence > 0.5.
-- Reasoning output is deterministic.
-- `detharness.js` still passes.
+- `src/reasoning.js` — Reasoning Engine (7 deterministic inference functions):
+  - `inferSemantics()` — naming conventions, decorators (e.g., `UsersController` → "handles HTTP requests")
+  - `inferBehavior()` — layered call chains (Controller → Service → Repository → Entity → Table)
+  - `inferBusinessRules()` — constraints from schema (`NOT NULL`, `PRIMARY KEY`)
+  - `inferDtoTransformations()` — data flow between layers (HTTP → Controller → Service → Repository → DB)
+  - `inferPermissions()` — auth patterns, inferred public access when no guards present
+  - `inferErrorHandling()` — try/catch detection, implicit throw strategy for TypeScript
+  - `inferStateMachines()` — status/state fields, enums, transition patterns
+  - Confidence computed deterministically from evidence count: 1→0.5, 2→0.7, 3+→0.9
+  - Every inference produces a `DERIVED_FACT` truth record with `source_authority: REASONING`
+- `src/orchestrator.js` — Added `reason()` function; reasoning is opt-in via `opts.reasoning`
+- `src/cli.js` — Added `reason` command: runs full pipeline with reasoning, prints derived facts
+- `src/persistence.js` — Saves `reasoning.json` alongside model/impact/package/truth
+- `spec/schemas/reasoning.schema.json` — Schema for `DERIVED_FACT` truth records
+- `harnesses/reasoning-harness.js` — 6-test harness: ≥5 facts, determinism, evidence verification, structural integrity, persistence, CLI integration
+- `docs/plans/2026-06-28-milestone3-reasoning.md` — Milestone 3 implementation plan
 
-**Dependencies:** Milestone 2 (persistence) — reasoning outputs should be persisted.
+**Harness result:** `REASONING PROVEN` — 6/6 tests pass, 14 derived facts from sample project, all 3 original harnesses remain green.
 
 ---
+
+## 2. Milestones Pending
 
 ### Milestone 4: S7 Truth Promotion + Invalidation
 
@@ -276,6 +285,9 @@
 - `kernel.lock` — 8 lines
 - `.gitignore` — 5 lines
 
+### Source (Reasoning)
+- `src/reasoning.js` — 280 lines
+
 ### Source (Persistence + Session)
 - `src/persistence.js` — 133 lines
 - `src/session.js` — 93 lines
@@ -287,6 +299,7 @@
 - `src/validation-harness.js` — 44 lines
 - `src/conformance-harness.js` — 39 lines
 - `harnesses/persistence-harness.js` — 246 lines
+- `harnesses/reasoning-harness.js` — 194 lines
 
 ### Documentation
 - `README.md` — 187 lines
@@ -300,8 +313,9 @@
 - `ARCHITECTURE_DECISIONS.md` — 149 lines
 - `CONTRIBUTING.md` — 156 lines
 - `docs/plans/2026-06-28-milestone2-persistence.md` — 71 lines
+- `docs/plans/2026-06-28-milestone3-reasoning.md` — 71 lines
 
-**Total:** 62 files (excluding `.git`).
+**Total:** 64 files (excluding `.git`).
 
 ---
 
@@ -312,13 +326,14 @@
 | `kernel.lock.schema.json` missing | Low | 1 | Referenced by `kernel.lock` but file not present. Create when implementing S1 full-hash verification. |
 | S1 full-hash verify | Medium | 2 | Currently only checks path existence. Should verify actual Kernel commit hash via git. |
 | S2 git-file persistence | ~~Medium~~ ✅ Done | ~~3~~ | ~~Store is in-memory only. No state survives reboot.~~ Implemented in Milestone 2. `save/load/roundTrip` proven, CLI `persist` command works. |
-| S4 cold inference | Medium | 3 | Ontology must be committed. Cannot infer profile from raw source. |
-| S7 truth promotion | Medium | 3 | Truth stays at `DIRECT_OBSERVATION`. No lifecycle transitions implemented. |
-| Live multi-vendor calls | Medium | 2 | Protocol and validator proven against fixtures. Live API integration pending. |
-| S9 Planning | High | 3 | No planning engine exists. |
-| S13 Mediation | High | 2 | No AI driver loop exists. |
-| S14 Execution | High | 4 | No code generation exists (by design until Milestone 4). |
-| S15 Handoff | High | 4 | No human review interface exists. |
+| S5 reasoning engines | ~~Medium~~ ✅ Done | ~~3~~ | ~~No semantic/behavioral inference.~~ Implemented in Milestone 3. 7 inference functions, 14 derived facts from sample project, deterministic. |
+| S4 cold inference | Medium | 8 | Ontology must be committed. Cannot infer profile from raw source. |
+| S7 truth promotion | Medium | 4 | Truth stays at `DIRECT_OBSERVATION`. No lifecycle transitions implemented. |
+| Live multi-vendor calls | Medium | 9 | Protocol and validator proven against fixtures. Live API integration pending. |
+| S9 Planning | High | 5 | No planning engine exists. |
+| S13 Mediation | High | 6 | No AI driver loop exists. |
+| S14 Execution | High | 7 | No code generation exists (by design until Milestone 7). |
+| S15 Handoff | High | 7 | No human review interface exists. |
 | CI/CD | Low | 5 | No GitHub Actions configured. |
 | Performance benchmarks | Low | 5 | No benchmarking exists. |
 
@@ -332,6 +347,7 @@
 | `src/validation-harness.js` | 2026-06-28 | PASS (10/10) | 0 |
 | `src/conformance-harness.js` | 2026-06-28 | PASS (7/7) | 0 |
 | `harnesses/persistence-harness.js` | 2026-06-28 | PASS (6/6) | 0 |
+| `harnesses/reasoning-harness.js` | 2026-06-28 | PASS (6/6) | 0 |
 
 **Package snapshot hash:** `e88cc4fc631a9a6d12fc665804770b15fc13c5711d222b23211e7e5cbef9ee5d`
 
