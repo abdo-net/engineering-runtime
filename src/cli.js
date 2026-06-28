@@ -4,6 +4,7 @@
 // it never reads or edits the project directly. Commands: verify | reconstruct | impact | package.
 const { canonical } = require('./util');
 const orch = require('./orchestrator');
+const { runValidationSuite } = require('./validation');
 
 function arg(flag, dflt) {
   const i = process.argv.indexOf(flag);
@@ -51,8 +52,14 @@ function main() {
       console.log(JSON.stringify(r.package, null, 2));
       break;
     }
+    case 'validate': {
+      const target = pos[0] || 'column:users.status';
+      const r = runValidationSuite(target, opts);
+      console.log(JSON.stringify(r, null, 2));
+      break;
+    }
     default:
-      fail('commands: verify | reconstruct | impact <node> | package <node>');
+      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node]');
   }
 }
 function fail(m) { console.error(m); process.exit(1); }
