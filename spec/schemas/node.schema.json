@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "node.schema.json",
+  "title": "Engineering Model Node",
+  "type": "object",
+  "required": ["id", "class", "name", "source_authority", "source_ref", "truth"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z]+:" },
+    "class": { "type": "string" },
+    "name": { "type": "string" },
+    "source_authority": { "enum": ["CODE", "MODEL"] },
+    "source_ref": { "type": "string" },
+    "truth": { "type": "string" },
+    "kernel_entity": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "spec/schemas/kernel.lock.schema.json",
+  "kernel_repo": "abdo-net/radius1-kernel",
+  "kernel_path": "../radius1-kernel",
+  "kernel_commit": "96042489b39e9a589280483054349ac2d7da00bc",
+  "kernel_version": "1.x",
+  "charter_id": "engineering-runtime-consumer"
+}

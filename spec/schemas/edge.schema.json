@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "edge.schema.json",
+  "title": "Typed Engineering Edge (TRACEABILITY_LINK)",
+  "type": "object",
+  "required": ["id", "type", "from", "to", "semantic", "propagates", "truth"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^edge:" },
+    "type": { "type": "string" },
+    "from": { "type": "string" },
+    "to": { "type": "string" },
+    "semantic": { "type": "string", "minLength": 1 },
+    "propagates": { "type": "boolean" },
+    "directional": { "const": true },
+    "truth": { "type": "string" }
+  },
+  "additionalProperties": true
+}

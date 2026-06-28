@@ -1,0 +1,24 @@
+{
+  "profile": "crud-web",
+  "node_classes": [
+    "Table", "Column", "Entity", "Field", "Repository", "Service", "DTO",
+    "Validation", "Controller", "Endpoint", "OpenAPI", "Client", "FrontendState",
+    "Permission", "Route", "Grid", "Filter", "Search", "Report", "Statistic",
+    "Export", "Test", "Documentation", "Evidence"
+  ],
+  "impact_classes": [
+    "Column", "Field", "Entity", "Repository", "Service", "DTO", "Validation",
+    "Controller", "Endpoint", "OpenAPI", "Client", "FrontendState", "Permission",
+    "Route", "Grid", "Test", "Documentation", "Evidence"
+  ],
+  "edge_types": [
+    { "type": "maps",               "from": "Column",     "to": "Field",      "propagates": true, "semantic": "database column is mapped by entity field" },
+    { "type": "field-of",           "from": "Field",      "to": "Entity",     "propagates": true, "semantic": "field belongs to entity" },
+    { "type": "persisted-by",       "from": "Entity",     "to": "Repository", "propagates": true, "semantic": "entity is persisted by repository" },
+    { "type": "used-by-service",    "from": "Repository", "to": "Service",    "propagates": true, "semantic": "repository is used by service" },
+    { "type": "used-by-controller", "from": "Service",    "to": "Controller", "propagates": true, "semantic": "service is used by controller" },
+    { "type": "exposes",            "from": "Controller", "to": "Endpoint",   "propagates": true, "semantic": "controller exposes endpoint" },
+    { "type": "documented-by",      "from": "Endpoint",   "to": "OpenAPI",    "propagates": true, "semantic": "endpoint is documented by an OpenAPI path" }
+  ],
+  "coverage_targets": { "default": 0.9 }
+}

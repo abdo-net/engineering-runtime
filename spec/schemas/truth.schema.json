@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "truth.schema.json",
+  "title": "Engineering Truth Record",
+  "type": "object",
+  "required": ["id", "statement", "class", "source_authority", "evidence", "lifecycle"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^truth:" },
+    "statement": { "type": "string" },
+    "class": {
+      "enum": ["DIRECT_OBSERVATION", "VERIFIED_FACT", "DERIVED_FACT",
+               "ARCHITECTURAL_DECISION", "BUSINESS_RULE", "CONSTRAINT",
+               "ASSUMPTION", "HYPOTHESIS", "UNSUPPORTED", "REJECTED", "SUPERSEDED"]
+    },
+    "source_authority": { "enum": ["CODE", "MODEL"] },
+    "evidence": { "type": "array", "items": { "type": "string" } },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "invalidation_rule": { "type": "string" },
+    "lifecycle": { "enum": ["Observed", "Documented", "Validated", "Published", "Challenged", "Corrected", "Archived"] }
+  },
+  "additionalProperties": true
+}
