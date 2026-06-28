@@ -5,6 +5,7 @@
 const { canonical } = require('./util');
 const orch = require('./orchestrator');
 const { runValidationSuite } = require('./validation');
+const { runConformanceSuite } = require('./ai-conformance');
 
 function arg(flag, dflt) {
   const i = process.argv.indexOf(flag);
@@ -58,8 +59,14 @@ function main() {
       console.log(JSON.stringify(r, null, 2));
       break;
     }
+    case 'conformance': {
+      const target = pos[0] || 'column:users.status';
+      const r = runConformanceSuite(target, opts);
+      console.log(JSON.stringify(r, null, 2));
+      break;
+    }
     default:
-      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node]');
+      fail('commands: verify | reconstruct | impact <node> | package <node> | validate [node] | conformance [node]');
   }
 }
 function fail(m) { console.error(m); process.exit(1); }

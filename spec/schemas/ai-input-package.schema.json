@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai-input-package.schema.json",
+  "title": "AI Input Package",
+  "description": "Exactly what the Runtime sends to an AI worker. Built deterministically from the Kernel-pinned ontology and the project file listing; never from conversation history.",
+  "type": "object",
+  "required": ["protocol_version", "session_id", "mission", "target", "stage", "allowed_reads", "ontology", "node_id_scheme", "evidence_requirement", "output_schema_ref"],
+  "properties": {
+    "protocol_version": { "type": "string" },
+    "session_id": { "type": "string" },
+    "mission": { "type": "string" },
+    "target": { "type": "string" },
+    "stage": { "enum": ["RECONSTRUCT_AND_PACKAGE"] },
+    "allowed_reads": { "type": "array", "items": { "type": "string" } },
+    "ontology": {
+      "type": "object",
+      "required": ["node_classes", "edge_types", "impact_classes"],
+      "properties": {
+        "node_classes": { "type": "array" },
+        "edge_types": { "type": "array" },
+        "impact_classes": { "type": "array" }
+      }
+    },
+    "node_id_scheme": { "type": "string" },
+    "evidence_requirement": { "type": "string" },
+    "output_schema_ref": { "type": "string" },
+    "deadline_ms": { "type": "integer" }
+  },
+  "additionalProperties": true
+}

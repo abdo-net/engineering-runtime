@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai-output-package.schema.json",
+  "title": "AI Output Package",
+  "description": "Exactly what an AI worker must return. Validated structurally and against project sources; the Runtime never reads free-text explanations as evidence.",
+  "type": "object",
+  "required": ["protocol_version", "session_id", "worker_id", "mission", "target", "stage", "claims", "impact_closure", "coverage_self_report"],
+  "properties": {
+    "protocol_version": { "type": "string" },
+    "session_id": { "type": "string" },
+    "worker_id": { "type": "string" },
+    "mission": { "type": "string" },
+    "target": { "type": "string" },
+    "stage": { "enum": ["RECONSTRUCT_AND_PACKAGE"] },
+    "claims": {
+      "type": "object",
+      "required": ["nodes", "edges", "truth"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "class", "name", "source_ref", "evidence_quote"],
+            "properties": {
+              "id": { "type": "string" }, "class": { "type": "string" }, "name": { "type": "string" },
+              "source_ref": { "type": "string" }, "evidence_quote": { "type": "string" }
+            }
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "from", "to", "source_ref", "evidence_quote"],
+            "properties": {
+              "id": { "type": "string" }, "type": { "type": "string" }, "from": { "type": "string" },
+              "to": { "type": "string" }, "source_ref": { "type": "string" }, "evidence_quote": { "type": "string" }
+            }
+          }
+        },
+        "truth": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "statement", "class", "evidence"],
+            "properties": {
+              "id": { "type": "string" }, "statement": { "type": "string" },
+              "class": { "enum": ["DIRECT_OBSERVATION", "VERIFIED_FACT", "DERIVED_FACT", "HYPOTHESIS"] },
+              "evidence": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "impact_closure": {
+      "type": "object",
+      "required": ["target", "nodes"],
+      "properties": { "target": { "type": "string" }, "nodes": { "type": "array", "items": { "type": "string" } } }
+    },
+    "coverage_self_report": {
+      "type": "object",
+      "required": ["coverage", "covered_classes", "blindspots"],
+      "properties": {
+        "coverage": { "type": "number" },
+        "covered_classes": { "type": "array" },
+        "blindspots": { "type": "array" }
+      }
+    },
+    "proposed_edits": { "type": "array", "items": { "type": "object", "required": ["file"], "properties": { "file": { "type": "string" } } } }
+  },
+  "additionalProperties": false
+}
