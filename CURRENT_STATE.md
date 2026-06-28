@@ -3,7 +3,7 @@
 **Version:** 0.1.0  
 **Branch:** `master`  
 **Date:** 2026-06-28  
-**Head:** `fc2fe02`
+**Head:** `18c99fb`
 
 ---
 
@@ -137,27 +137,36 @@
 
 ---
 
-## 2. Milestones Pending
-
 ### Milestone 4: S7 Truth Promotion + Invalidation
 
-**Status:** 🔄 NOT STARTED
+**Commit:** `18c99fb`  
+**Date:** 2026-06-28
 
-**What must be implemented:**
-- `src/truth.js` — Truth Lifecycle Engine: `promoteTruth()`, `invalidateTruth()`, `evaluateTruth()`, `mergeTruth()`.
-- `src/engines.js` — Add `buildTruth()` and `pruneTruth()`.
-- `src/cli.js` — New commands: `promote`, `invalidate`, `truth`.
-- `src/gates.js` — New gates: `G-TRUTH-VALID`, `G-TRUTH-CONSISTENT`.
+**What was implemented:**
 
-**Success criteria:**
-- Truth promotion produces a git diff in `<project>-runtime` repo.
-- `G-TRUTH-VALID` blocks when Published truth has < 2 evidence sources.
-- `G-TRUTH-CONSISTENT` blocks when two Published truths contradict.
-- `detharness.js` still passes.
+- `src/truth.js` — Truth Lifecycle Engine:
+  - `evaluateTruth()` — checks promotion criteria for each target lifecycle state
+  - `promoteTruth()` — advances truth through: Observed → Documented → Validated → Published
+  - `invalidateTruth()` — marks truth as Challenged with reason
+  - `archiveTruth()` — moves truth to Archived
+  - `mergeTruth()` — combines two truths, keeps higher evidence count and more advanced lifecycle
+  - `findContradictions()` — detects contradictory Published truths (same subject, opposite statements)
+  - `buildTruthLifecycle()` — auto-promotes all eligible truths in a store
+  - `getTruthStats()` — lifecycle state statistics
+  - Promotion criteria: Observed→Documented (≥1 evidence), Documented→Validated (≥2 evidence), Validated→Published (dependencies validated)
+- `src/gates.js` — Added `G-TRUTH-VALID`: blocks Published truths with < 2 evidence sources
+- `src/gates.js` — Added `G-TRUTH-CONSISTENT`: blocks contradictory Published truths
+- `src/cli.js` — Added `promote <truthId> [targetState]` command
+- `src/cli.js` — Added `invalidate <truthId> --reason=...` command
+- `src/cli.js` — Added `truth` command (lists all truths, stats, gates, contradictions)
+- `harnesses/truth-harness.js` — 7-test harness: promotion lifecycle, G-TRUTH-VALID, G-TRUTH-CONSISTENT, determinism, invalidation, merge, CLI integration
+- `docs/plans/2026-06-28-milestone4-truth.md` — Milestone 4 implementation plan
 
-**Dependencies:** Milestone 2 (persistence), Milestone 3 (reasoning).
+**Harness result:** `TRUTH LIFECYCLE PROVEN` — 7/7 tests pass, all 5 other harnesses remain green.
 
 ---
+
+## 2. Milestones Pending
 
 ### Milestone 5: S9 Planning Engine
 
@@ -285,21 +294,25 @@
 - `kernel.lock` — 8 lines
 - `.gitignore` — 5 lines
 
+### Source (Truth)
+- `src/truth.js` — 345 lines
+
 ### Source (Reasoning)
 - `src/reasoning.js` — 280 lines
 
 ### Source (Persistence + Session)
-- `src/persistence.js` — 133 lines
+- `src/persistence.js` — 138 lines
 - `src/session.js` — 93 lines
 - `src/handoff-protocol.js` — 124 lines
 
 ### Source (CLI + Harnesses)
-- `src/cli.js` — 115 lines
+- `src/cli.js` — 226 lines
 - `src/detharness.js` — 39 lines
 - `src/validation-harness.js` — 44 lines
 - `src/conformance-harness.js` — 39 lines
 - `harnesses/persistence-harness.js` — 246 lines
 - `harnesses/reasoning-harness.js` — 194 lines
+- `harnesses/truth-harness.js` — 215 lines
 
 ### Documentation
 - `README.md` — 187 lines
@@ -314,8 +327,9 @@
 - `CONTRIBUTING.md` — 156 lines
 - `docs/plans/2026-06-28-milestone2-persistence.md` — 71 lines
 - `docs/plans/2026-06-28-milestone3-reasoning.md` — 71 lines
+- `docs/plans/2026-06-28-milestone4-truth.md` — 71 lines
 
-**Total:** 64 files (excluding `.git`).
+**Total:** 65 files (excluding `.git`).
 
 ---
 
@@ -326,9 +340,9 @@
 | `kernel.lock.schema.json` missing | Low | 1 | Referenced by `kernel.lock` but file not present. Create when implementing S1 full-hash verification. |
 | S1 full-hash verify | Medium | 2 | Currently only checks path existence. Should verify actual Kernel commit hash via git. |
 | S2 git-file persistence | ~~Medium~~ ✅ Done | ~~3~~ | ~~Store is in-memory only. No state survives reboot.~~ Implemented in Milestone 2. `save/load/roundTrip` proven, CLI `persist` command works. |
-| S5 reasoning engines | ~~Medium~~ ✅ Done | ~~3~~ | ~~No semantic/behavioral inference.~~ Implemented in Milestone 3. 7 inference functions, 14 derived facts from sample project, deterministic. |
 | S4 cold inference | Medium | 8 | Ontology must be committed. Cannot infer profile from raw source. |
-| S7 truth promotion | Medium | 4 | Truth stays at `DIRECT_OBSERVATION`. No lifecycle transitions implemented. |
+| S5 reasoning engines | ~~Medium~~ ✅ Done | ~~4~~ | ~~No semantic/behavioral inference.~~ Implemented in Milestone 3. 7 inference functions, 14 derived facts from sample project, deterministic. |
+| S7 truth promotion | ~~Medium~~ ✅ Done | ~~4~~ | ~~Truth stays at `DIRECT_OBSERVATION`. No lifecycle transitions.~~ Implemented in Milestone 4. Full lifecycle: Observed→Documented→Validated→Published, with G-TRUTH-VALID and G-TRUTH-CONSISTENT gates. |
 | Live multi-vendor calls | Medium | 9 | Protocol and validator proven against fixtures. Live API integration pending. |
 | S9 Planning | High | 5 | No planning engine exists. |
 | S13 Mediation | High | 6 | No AI driver loop exists. |
@@ -348,6 +362,7 @@
 | `src/conformance-harness.js` | 2026-06-28 | PASS (7/7) | 0 |
 | `harnesses/persistence-harness.js` | 2026-06-28 | PASS (6/6) | 0 |
 | `harnesses/reasoning-harness.js` | 2026-06-28 | PASS (6/6) | 0 |
+| `harnesses/truth-harness.js` | 2026-06-28 | PASS (7/7) | 0 |
 
 **Package snapshot hash:** `e88cc4fc631a9a6d12fc665804770b15fc13c5711d222b23211e7e5cbef9ee5d`
 

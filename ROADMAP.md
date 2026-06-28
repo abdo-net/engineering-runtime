@@ -52,7 +52,7 @@ More critically, the existing roadmap **omitted S5 Reasoning Engines entirely**.
 | # | Name | Objective Contribution | Primary Spec | Ships When |
 |---|---|---|---|---|
 | 3 | S5 Reasoning Engines | #2 — understand semantics, behavior, intent | ✅ COMPLETE | `fc2fe02` |
-| 4 | S7 Truth Promotion + Invalidation | #3 — deepen Engineering Truth quality | S7 | `detharness.js` green |
+| 4 | S7 Truth Promotion + Invalidation | #3 — deepen Engineering Truth quality | ✅ COMPLETE | `18c99fb` |
 | 5 | S9 Planning Engine | #4 — plan changes from frozen package | S9 | `detharness.js` green |
 | 6 | S13 Mediation (Core AI Loop) | #5 — AI driver loop with fixtures | S13 | `detharness.js` green |
 | 7 | S14 Execution + S15 Handoff | #5 — execute from package; hand off to human | S14, S15 | `detharness.js` green |
@@ -206,11 +206,11 @@ Bundled truth promotion with planning and persistence. Truth promotion is a sepa
    - `G-TRUTH-CONSISTENT` — no contradictions among Published truths.
 
 ### Success Criteria
-- [ ] Truth promotion produces a git diff in the `<project>-runtime` repo (new truth state committed).
-- [ ] `G-TRUTH-VALID` blocks when a Published truth has < 2 evidence sources.
-- [ ] `G-TRUTH-CONSISTENT` blocks when two Published truths contradict.
-- [ ] `detharness.js` still passes (determinism preserved — truth transitions are deterministic for a given evidence set).
-- [ ] Reasoning-derived facts can be promoted to Published and invalidated when challenged.
+- [x] Truth promotion produces a git diff in the `<project>-runtime` repo (new truth state committed).
+- [x] `G-TRUTH-VALID` blocks when a Published truth has < 2 evidence sources.
+- [x] `G-TRUTH-CONSISTENT` blocks when two Published truths contradict.
+- [x] `detharness.js` still passes (determinism preserved — truth transitions are deterministic for a given evidence set).
+- [x] Reasoning-derived facts can be promoted to Published and invalidated when challenged.
 
 ### Dependencies
 - Milestone 2 (persistence) — truth state must be persisted.
