@@ -3,7 +3,7 @@
 **Version:** 0.1.0  
 **Branch:** `master`  
 **Date:** 2026-06-28  
-**Head:** `bdec48219f9e2ee48d6304ae1d22b727bff20edb`
+**Head:** `b877c35`
 
 ---
 
@@ -89,71 +89,185 @@
 
 ---
 
-## 2. Milestones Pending
+### Milestone 2: S2 Git-File Persistence
 
-### Milestone 2: S13 Mediation + Live Multi-Vendor AI Loop
+**Commit:** `b877c35`  
+**Date:** 2026-06-28 22:33
 
-**Status:** 🔄 NOT STARTED  
-**Blocked by:** No live API keys configured for Claude, GPT, Gemini, Kimi, or xAI.
+**What was implemented:**
 
-**What must be implemented:**
-- `src/mediation.js` — JSON-RPC client loop with retry logic.
-- `src/vendors/claude.js` — Anthropic API adapter.
-- `src/vendors/openai.js` — OpenAI API adapter.
-- `src/vendors/gemini.js` — Google Gemini API adapter.
-- `src/vendors/kimi.js` — Moonshot Kimi API adapter.
-- `src/vendors/xai.js` — xAI Grok API adapter.
-- `src/config.js` — API key management (env vars only, no committed secrets).
-- Update `src/ai-conformance.js` to optionally run live vendors alongside fixtures.
-- Update `src/conformance-harness.js` to assert live vendor conformance.
+- `src/persistence.js` — Git-file persistence layer: writes model/impact/package/truth to `<project>-runtime/` sibling git repo. Deterministic canonical JSON, no timestamps. `save()`, `load()`, `roundTrip()` with `canonical(load(save(x))) === canonical(x)` guarantee.
+- `src/session.js` — Deterministic session state tracking: `deriveSessionId()`, `startSession()`, `endSession()`, `resumeSession()`, `listSessions()`. Stored in `<project>-runtime/sessions/`.
+- `src/handoff-protocol.js` — AI-to-AI resumption protocol: `generateHandoff()` produces machine-readable handoff with discovery summary, gate state, impact closure, and prioritized next steps. `loadHandoff()`, `listHandoffs()`.
+- `src/cli.js` — Updated with `persist` command: runs full pipeline, saves to git repo, starts session, generates handoff, prints results.
+- `harnesses/persistence-harness.js` — 6-test harness: round-trip, roundTrip helper, session lifecycle, handoff generation, determinism, CLI integration.
+- `docs/plans/2026-06-28-milestone2-persistence.md` — Milestone 2 implementation plan.
+- `.gitignore` — Added `fixtures/*-runtime/` to exclude test runtime directories.
+- `src/util.js` — `canonical()` now handles `undefined` → `null` to prevent invalid JSON output.
 
-**Success criteria:**
-- At least 2 live vendors produce accepted compliant submissions.
-- At least 1 live vendor's untrusted behavior is caught by the validator.
-- `detharness.js` stays green.
-- Cross-vendor Jaccard ≥ 0.95 for Q1–Q5.
+**Harness result:** `PERSISTENCE PROVEN` — 6/6 tests pass, all 3 original harnesses remain green.
 
 ---
 
-### Milestone 3: S9 Planning + S7 Truth Promotion + S2 Git-File Persistence
+## 2. Milestones Pending
+
+### Milestone 3: S5 Reasoning Engines
+
+**Status:** 🔄 NOT STARTED
+
+**What must be implemented:**
+- `src/reasoning.js` — Reasoning Engine (E02/E04/E05/E06/E07/E08/E09/E10): infer semantics, behavior, business rules, state machines, DTO transformations, permissions, error handling.
+- `src/engines.js` — Add `buildReasoning()` function.
+- `spec/schemas/reasoning.schema.json` — Schema for reasoning outputs.
+- `src/cli.js` — New command: `reason <projectDir>`.
+
+**Success criteria:**
+- `node src/cli.js reason fixtures/sample-project` produces at least 5 derived facts with evidence and confidence > 0.5.
+- Reasoning output is deterministic.
+- `detharness.js` still passes.
+
+**Dependencies:** Milestone 2 (persistence) — reasoning outputs should be persisted.
+
+---
+
+### Milestone 4: S7 Truth Promotion + Invalidation
+
+**Status:** 🔄 NOT STARTED
+
+**What must be implemented:**
+- `src/truth.js` — Truth Lifecycle Engine: `promoteTruth()`, `invalidateTruth()`, `evaluateTruth()`, `mergeTruth()`.
+- `src/engines.js` — Add `buildTruth()` and `pruneTruth()`.
+- `src/cli.js` — New commands: `promote`, `invalidate`, `truth`.
+- `src/gates.js` — New gates: `G-TRUTH-VALID`, `G-TRUTH-CONSISTENT`.
+
+**Success criteria:**
+- Truth promotion produces a git diff in `<project>-runtime` repo.
+- `G-TRUTH-VALID` blocks when Published truth has < 2 evidence sources.
+- `G-TRUTH-CONSISTENT` blocks when two Published truths contradict.
+- `detharness.js` still passes.
+
+**Dependencies:** Milestone 2 (persistence), Milestone 3 (reasoning).
+
+---
+
+### Milestone 5: S9 Planning Engine
 
 **Status:** 🔄 NOT STARTED
 
 **What must be implemented:**
 - `src/planning.js` — Planning Engine (E16): generates ordered HYPOTHESIS-only proposals from frozen Execution Package.
-- `src/engines.js` — Truth promotion: `promoteTruth()`, `invalidateTruth()` with lifecycle transitions.
-- `src/persistence.js` — Git-file persistence: writes model/impact/package/truth to `<project>-runtime/` sibling git repo.
-- `src/cli.js` — New commands: `plan`, `promote`, `persist`.
-- Gate: `G-PLAN-VALID` — plan must be a subgraph of the impact closure.
-- Gate: `G-TRUTH-VALID` — all Published truths must have ≥ 2 independent evidence sources.
+- `src/cli.js` — New command: `plan <target>`.
+- `src/gates.js` — New gates: `G-PLAN-VALID`, `G-PLAN-TRUTH-BASED`, `G-PLAN-RISK-ACCEPTABLE`.
+
+**Success criteria:**
+- `node src/cli.js plan column:users.status` produces a valid plan constrained to `allowed_scope`.
+- Every proposal references at least one Published truth.
+- Plan risk levels are computed deterministically.
+- `detharness.js` still passes.
+
+**Dependencies:** Milestone 2 (persistence), Milestone 3 (reasoning), Milestone 4 (truth promotion).
 
 ---
 
-### Milestone 4: S14 Execution + Escape Hatch + S15 Handoff
-
-**Status:** 🔄 NOT STARTED — intentionally absent by design
-
-**What must be implemented:**
-- `src/execution.js` — Execution Engine: generates file modifications (git patches) from approved plan.
-- `src/escape-hatch.js` — Contradiction detection: re-runs adapters on modified source, compares to expected model.
-- `src/handoff.js` — Human review handoff: generates PR description with evidence, scope, coverage, blind spots.
-- `src/cli.js` — New commands: `execute`, `review`, `submit`.
-- Escape hatch: on live-code contradiction, HALT + emit `CONTRADICTION` finding + automatic rollback.
-
----
-
-### Milestone 5: Multi-Vendor Determinism + Production Hardening
+### Milestone 6: S13 Mediation (Core AI Loop)
 
 **Status:** 🔄 NOT STARTED
 
 **What must be implemented:**
-- Cross-vendor `detharness.js` — Full pipeline run with 3+ live vendors, prove output convergence.
-- Performance benchmarks.
-- Security audit (no secrets, no eval/Function, no network calls in core engines).
-- `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md` (if not already present).
-- CI/CD pipeline: GitHub Actions running all 3 harnesses on every PR.
+- `src/mediation.js` — Core AI Mediation Loop: `mediate()`, `retry()`, `sandbox()`, `record()`.
+- `src/config.js` — Configuration management (no secrets).
+- `src/cli.js` — New command: `mediate <target>`.
+
+**Success criteria:**
+- `node src/cli.js mediate column:users.status` produces valid Input Package, receives Output Package, returns verdict.
+- Mediation loop is deterministic.
+- Every interaction recorded to `<project>-runtime/mediation/`.
+- `detharness.js` still passes.
+
+**Dependencies:** Milestone 2 (persistence), Milestone 5 (planning).
 
 ---
+
+### Milestone 7: S14 Execution + S15 Handoff
+
+**Status:** 🔄 NOT STARTED — intentionally absent by design
+
+**What must be implemented:**
+- `src/execution.js` — Execution Engine: generates file modifications from approved plan.
+- `src/escape-hatch.js` — Contradiction detection: re-runs adapters on modified source, compares to expected model.
+- `src/handoff.js` — Human review handoff: generates PR description with evidence, scope, coverage, blind spots.
+- `src/cli.js` — New commands: `execute`, `review`, `submit`, `rollback`.
+- `src/gates.js` — New gates: `G-EXECUTION-VALID`, `G-CONTRADICTION-FREE`, `G-HANDOFF-COMPLETE`.
+
+**Success criteria:**
+- Plan can be executed and produce a git diff within `allowed_scope`.
+- Escape hatch detects contradictions.
+- Handoff report includes all required evidence.
+- `detharness.js` still passes.
+- Second AI can read handoff and resume without re-reading source.
+
+**Dependencies:** Milestone 2 (persistence), Milestone 5 (planning), Milestone 6 (mediation).
+
+---
+
+### Milestone 8: S4 Cold Ontology Inference
+
+**Status:** 🔄 NOT STARTED
+
+**What must be implemented:**
+- `src/ontology-inference.js` — Cold Ontology Inference Engine: discovers ontology from raw project source.
+- `src/cli.js` — New command: `infer-ontology <projectDir>`.
+
+**Success criteria:**
+- `node src/cli.js infer-ontology fixtures/sample-project` produces `discovered-ontology.json` matching `profiles/crud-web.json` within 90% overlap.
+- Discovered ontology is deterministic.
+- `detharness.js` still passes.
+
+**Dependencies:** Milestone 3 (reasoning).
+
+---
+
+### Milestone 9: Live Vendor Integration
+
+**Status:** 🔄 NOT STARTED
+
+**What must be implemented:**
+- `src/vendors/claude.js` — Anthropic API adapter.
+- `src/vendors/openai.js` — OpenAI API adapter.
+- `src/vendors/gemini.js` — Google Gemini API adapter.
+- `src/vendors/kimi.js` — Moonshot Kimi API adapter.
+- `src/vendors/xai.js` — xAI Grok API adapter.
+- Environment variable configuration for API keys.
+- Cross-vendor convergence test (Jaccard ≥ 0.95).
+
+**Success criteria:**
+- At least 2 live vendors produce accepted compliant submissions.
+- At least 1 live vendor's untrusted behavior is caught by validator.
+- Cross-vendor Jaccard ≥ 0.95 for full pipeline output.
+- No API keys committed to repository.
+- `detharness.js` still passes with fixtures.
+- All 3 harnesses pass with both fixtures and live vendors.
+
+**Dependencies:** Milestone 6 (mediation core), Milestone 7 (execution).
+
+---
+
+### Milestone 10: Production Hardening
+
+**Status:** 🔄 NOT STARTED
+
+**What must be implemented:**
+- CI/CD pipeline (GitHub Actions): run all harnesses on every PR.
+- Performance benchmarks: adapter parsing, impact closure, package freeze, reasoning, planning.
+- Security audit: no secrets, no eval/Function, no network calls in core engines.
+
+**Success criteria:**
+- All harnesses run in CI < 30 seconds.
+- No security warnings.
+- Performance benchmarks establish baseline.
+- CI blocks PRs with failing harnesses, security warnings, or performance regressions > 10%.
+
+**Dependencies:** All previous milestones (1–9) complete.
 
 ## 3. File Inventory (Current)
 
@@ -161,6 +275,18 @@
 - `package.json` — 15 lines
 - `kernel.lock` — 8 lines
 - `.gitignore` — 5 lines
+
+### Source (Persistence + Session)
+- `src/persistence.js` — 133 lines
+- `src/session.js` — 93 lines
+- `src/handoff-protocol.js` — 124 lines
+
+### Source (CLI + Harnesses)
+- `src/cli.js` — 115 lines
+- `src/detharness.js` — 39 lines
+- `src/validation-harness.js` — 44 lines
+- `src/conformance-harness.js` — 39 lines
+- `harnesses/persistence-harness.js` — 246 lines
 
 ### Documentation
 - `README.md` — 187 lines
@@ -170,65 +296,12 @@
 - `REPOSITORY_CHARTER.md` — 192 lines
 - `DEVELOPMENT_PROTOCOL.md` — 175 lines
 - `CURRENT_STATE.md` — this file
-- `ROADMAP.md` — 168 lines
+- `ROADMAP.md` — 551 lines
 - `ARCHITECTURE_DECISIONS.md` — 149 lines
 - `CONTRIBUTING.md` — 156 lines
+- `docs/plans/2026-06-28-milestone2-persistence.md` — 71 lines
 
-### Source (Core)
-- `src/kernel.js` — 25 lines
-- `src/store.js` — 31 lines
-- `src/util.js` — 22 lines
-- `src/adapters.js` — 129 lines
-- `src/ontology.js` — 14 lines
-- `src/engines.js` — 43 lines
-- `src/graph.js` — 30 lines
-- `src/coverage.js` — 37 lines
-- `src/gates.js` — 20 lines
-- `src/orchestrator.js` — 54 lines
-- `src/packaging.js` — 36 lines
-- `src/protocol.js` — 59 lines
-- `src/conformance.js` — 168 lines
-- `src/ai-conformance.js` — 41 lines
-- `src/validator.js` — 112 lines
-- `src/validation.js` — 97 lines
-
-### Source (CLI + Harnesses)
-- `src/cli.js` — 73 lines
-- `src/detharness.js` — 39 lines
-- `src/validation-harness.js` — 44 lines
-- `src/conformance-harness.js` — 39 lines
-
-### Source (Workers + Fixtures)
-- `src/workers/faithful-reorder.js` — 24 lines
-- `src/workers/faithful-independent.js` — 31 lines
-- `src/workers/guessing.js` — 39 lines
-- `src/workers/lazy.js` — 29 lines
-- `src/workers/resume-only.js` — 25 lines
-- `src/ai-workers/compliant.js` — 56 lines
-- `src/ai-workers/hallucinator.js` — 19 lines
-- `src/ai-workers/evidence-forger.js` — 18 lines
-- `src/ai-workers/lazy-coverage-liar.js` — 25 lines
-- `src/ai-workers/scope-violator.js` — 15 lines
-- `src/ai-workers/instruction-ignorer.js` — 12 lines
-- `src/ai-workers/impact-underclaimer.js` — 13 lines
-
-### Schemas
-- `spec/schemas/node.schema.json` — 17 lines
-- `spec/schemas/edge.schema.json` — 18 lines
-- `spec/schemas/truth.schema.json` — 22 lines
-- `spec/schemas/ai-input-package.schema.json` — 30 lines
-- `spec/schemas/ai-output-package.schema.json` — 72 lines
-
-### Profile + Fixtures
-- `profiles/crud-web.json` — 24 lines
-- `fixtures/sample-project/db.sql` — 5 lines
-- `fixtures/sample-project/openapi.json` — 8 lines
-- `fixtures/sample-project/user.entity.ts` — 8 lines
-- `fixtures/sample-project/users.controller.ts` — 5 lines
-- `fixtures/sample-project/users.repository.ts` — 3 lines
-- `fixtures/sample-project/users.service.ts` — 3 lines
-
-**Total:** 57 files (excluding `.git`).
+**Total:** 62 files (excluding `.git`).
 
 ---
 
@@ -238,7 +311,7 @@
 |---|---|---|---|
 | `kernel.lock.schema.json` missing | Low | 1 | Referenced by `kernel.lock` but file not present. Create when implementing S1 full-hash verification. |
 | S1 full-hash verify | Medium | 2 | Currently only checks path existence. Should verify actual Kernel commit hash via git. |
-| S2 git-file persistence | Medium | 3 | Store is in-memory only. No state survives reboot. |
+| S2 git-file persistence | ~~Medium~~ ✅ Done | ~~3~~ | ~~Store is in-memory only. No state survives reboot.~~ Implemented in Milestone 2. `save/load/roundTrip` proven, CLI `persist` command works. |
 | S4 cold inference | Medium | 3 | Ontology must be committed. Cannot infer profile from raw source. |
 | S7 truth promotion | Medium | 3 | Truth stays at `DIRECT_OBSERVATION`. No lifecycle transitions implemented. |
 | Live multi-vendor calls | Medium | 2 | Protocol and validator proven against fixtures. Live API integration pending. |
@@ -258,6 +331,7 @@
 | `src/detharness.js` | 2026-06-28 | PASS (DETERMINISM PROVEN) | 0 |
 | `src/validation-harness.js` | 2026-06-28 | PASS (10/10) | 0 |
 | `src/conformance-harness.js` | 2026-06-28 | PASS (7/7) | 0 |
+| `harnesses/persistence-harness.js` | 2026-06-28 | PASS (6/6) | 0 |
 
 **Package snapshot hash:** `e88cc4fc631a9a6d12fc665804770b15fc13c5711d222b23211e7e5cbef9ee5d`
 
